@@ -1,10 +1,10 @@
 {
-  "name": "git-user-changer",
+  "name": "@steadfast-devs/git-user-manager",
   "version": "0.0.1",
   "description": "manage your git user´s",
   "main": "lib/index.js",
   "bin": {
-    "git-user-changer": "bin/git-user-changer"
+    "gum": "./lib/index.js"
   },
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
