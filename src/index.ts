@@ -4,10 +4,38 @@ import figlet from 'figlet'
 import Program from './libs/program'
 // import path from 'path'
 import { PrismaClient } from '@prisma/client'
+import { exec } from 'child_process'
 
-const prisma = new PrismaClient()
+function mainThread () {
+  const prisma = new PrismaClient()
+  main(prisma).catch((error) => {
+    console.error(error)
+    process.exit(1)
+    throw error
+  }).finally(() => {
+    prisma.$disconnect()
+  })
+}
 
-async function main () {
+try {
+  mainThread()
+} catch (error) {
+  exec('prisma generate', (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`)
+      return
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`)
+      return
+    }
+    mainThread()
+  })
+  console.log(error)
+  process.exit(1)
+}
+
+async function main (prisma: PrismaClient): Promise<void> {
   clear()
 
   const cli = Program.getInstance(prisma)
@@ -27,11 +55,3 @@ async function main () {
     }
   )
 }
-
-main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-  throw error
-}).finally(() => {
-  prisma.$disconnect()
-})
